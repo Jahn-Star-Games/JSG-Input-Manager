@@ -21,7 +21,7 @@ MonoBehaviour:
     negativeKey: 0
     sensitivity: 0.03
     gravity: 3
-    deadZone: 0.05
+    deadZone: 0.075
     currentValue: 0
     uiButtonState: 0
     uiAxisState: 1
@@ -33,7 +33,7 @@ MonoBehaviour:
     negativeKey: 0
     sensitivity: 0.03
     gravity: 3
-    deadZone: 0.05
+    deadZone: 0.075
     currentValue: 0
     uiButtonState: 0
     uiAxisState: -0.07974522
