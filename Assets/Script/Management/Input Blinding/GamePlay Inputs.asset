@@ -23,8 +23,8 @@ MonoBehaviour:
     gravity: 3
     deadZone: 0.05
     currentValue: 0
-    uiButtonState: 2
-    uiAxisState: 0
+    uiButtonState: 0
+    uiAxisState: 0.02512565
   - name: Mouse Y
     remote: 1
     type: 0
@@ -35,8 +35,8 @@ MonoBehaviour:
     gravity: 3
     deadZone: 0.05
     currentValue: 0
-    uiButtonState: 2
-    uiAxisState: 0
+    uiButtonState: 0
+    uiAxisState: 0.19472201
   - name: Jump
     remote: 0
     type: 1
