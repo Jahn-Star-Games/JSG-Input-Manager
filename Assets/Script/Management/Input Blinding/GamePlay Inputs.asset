@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputs:
   - name: Mouse X
-    remote: 1
+    remote: 0
     type: 0
     key: 0
     positiveKey: 0
@@ -24,9 +24,9 @@ MonoBehaviour:
     deadZone: 0.05
     currentValue: 0
     uiButtonState: 0
-    uiAxisState: 0
+    uiAxisState: 0.68214977
   - name: Mouse Y
-    remote: 1
+    remote: 0
     type: 0
     key: 0
     positiveKey: 0
@@ -36,7 +36,7 @@ MonoBehaviour:
     deadZone: 0.05
     currentValue: 0
     uiButtonState: 0
-    uiAxisState: 0
+    uiAxisState: -0.49610904
   - name: Jump
     remote: 0
     type: 1
@@ -143,7 +143,7 @@ MonoBehaviour:
     gravity: 4
     deadZone: 0.01
     currentValue: 0
-    uiButtonState: 0
+    uiButtonState: 2
     uiAxisState: 0
   - name: Horn
     remote: 0
