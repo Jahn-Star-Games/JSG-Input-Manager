@@ -24,7 +24,7 @@ MonoBehaviour:
     deadZone: 0.05
     currentValue: 0
     uiButtonState: 0
-    uiAxisState: 0.30778646
+    uiAxisState: 0.68214977
   - name: Mouse Y
     remote: 0
     type: 0
@@ -36,48 +36,12 @@ MonoBehaviour:
     deadZone: 0.05
     currentValue: 0
     uiButtonState: 0
-    uiAxisState: 0.502508
+    uiAxisState: -0.49610904
   - name: Jump
     remote: 0
     type: 1
     key: 44
     positiveKey: 44
-    negativeKey: 0
-    sensitivity: 0.4
-    gravity: 4
-    deadZone: 0.01
-    currentValue: 0
-    uiButtonState: 0
-    uiAxisState: 0
-  - name: Reload
-    remote: 0
-    type: 1
-    key: 11
-    positiveKey: 0
-    negativeKey: 0
-    sensitivity: 0.4
-    gravity: 4
-    deadZone: 0.01
-    currentValue: 0
-    uiButtonState: 0
-    uiAxisState: 0
-  - name: Fire
-    remote: 0
-    type: 1
-    key: 9
-    positiveKey: 10
-    negativeKey: 0
-    sensitivity: 0.4
-    gravity: 4
-    deadZone: 0.01
-    currentValue: 0
-    uiButtonState: 0
-    uiAxisState: 0
-  - name: Interact
-    remote: 0
-    type: 1
-    key: 10
-    positiveKey: 0
     negativeKey: 0
     sensitivity: 0.4
     gravity: 4
@@ -108,7 +72,7 @@ MonoBehaviour:
     deadZone: 0.01
     currentValue: 0
     uiButtonState: 0
-    uiAxisState: 0.7737557
+    uiAxisState: 0
   - name: Horizontal
     remote: 0
     type: 0
@@ -120,4 +84,76 @@ MonoBehaviour:
     deadZone: 0.01
     currentValue: 0
     uiButtonState: 0
-    uiAxisState: 0.6334841
+    uiAxisState: 0
+  - name: Interact
+    remote: 0
+    type: 1
+    key: 10
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Camera
+    remote: 0
+    type: 1
+    key: 29
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: SignalR
+    remote: 0
+    type: 1
+    key: 17
+    positiveKey: 17
+    negativeKey: 16
+    sensitivity: 1000
+    gravity: 1000
+    deadZone: 0.001
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: SignalL
+    remote: 0
+    type: 1
+    key: 16
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Light
+    remote: 0
+    type: 1
+    key: 26
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 2
+    uiAxisState: 0
+  - name: Horn
+    remote: 0
+    type: 1
+    key: 23
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
