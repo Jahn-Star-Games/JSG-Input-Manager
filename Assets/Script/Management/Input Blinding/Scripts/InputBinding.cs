@@ -13,7 +13,7 @@ namespace JahnStar.CoreThreeD
     [CreateAssetMenu(menuName = "JahnStar/Core/Input Bindings", fileName = "Input Bindings")]
     public class InputBinding : ScriptableObject
     {
-        public List<InputData> inputs = new List<InputData>();
+        [SerializeField] internal List<InputData> inputs = new List<InputData>();
         internal Dictionary<string, int> inputIndex;
         /// <summary>
         /// <para>Eger 'hierarchy' penceresinde 'GameManager.cs > inputBindings' listesi var ise</para>
@@ -23,7 +23,7 @@ namespace JahnStar.CoreThreeD
         /// <returns> Eger girdi 'axis' ise -1 = Min ve 1 = Max arasinda deger dondurur. Eger 'button' ise 1 = true, 0 = false olarak dondurur.</returns>
         /// <param name="name">inputs listesindeki adi</param>
         /// <param name="type"> 0 = GetKeyDown, 1 = GetKey, 2 = GetKeyUp</param>
-        public float GetInput(string name, int type = 1)
+        internal float GetInput(string name, int type = 1)
         {
             if (inputIndex == null)
             {
