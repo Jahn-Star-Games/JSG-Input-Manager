@@ -76,28 +76,28 @@ namespace JahnStar.CoreThreeD
                         {
                             if (input.uiButtonState > 0) // Mobile, UI
                             {
-                                if (type == 0) // basildiysa
+                                if (type == 0) // press down
                                 {
-                                    if (input.uiButtonState == 1) // basiliyor
+                                    if (input.uiButtonState == 1) // pressing
                                     {
                                         input.currentValue = 1;
                                         input.uiButtonState = 0;
                                     }
-                                    else input.currentValue = input.uiButtonState = 0; // basilmiyor
+                                    else input.currentValue = input.uiButtonState = 0; // not press
                                 }
-                                else if (type == 2) // birakildiysa
+                                else if (type == 2) // press up
                                 {
-                                    if (input.uiButtonState == 2) // birakildi
+                                    if (input.uiButtonState == 2) // press up
                                     {
                                         input.currentValue = 1;
                                         input.uiButtonState = 0;
                                     }
-                                    else input.currentValue = input.uiButtonState = 0; // basilmiyor
+                                    else input.currentValue = input.uiButtonState = 0; // not press
                                 }
-                                else // basiliyorsa
+                                else // pressing
                                 {
-                                    if (input.uiButtonState == 1) input.currentValue = 1; // basiliyor
-                                    else input.currentValue = input.uiButtonState = 0; // basilmiyor
+                                    if (input.uiButtonState == 1) input.currentValue = 1; // pressing
+                                    else input.currentValue = input.uiButtonState = 0; // not press
                                 }
                             }
                             else // Keyboard, Mouse, Gamepad
@@ -132,7 +132,7 @@ namespace JahnStar.CoreThreeD
     }
     #if UNITY_EDITOR
     [CustomEditor(typeof(InputBinding))]
-    public class InputBinding_Editor : Editor
+    public class InputBinding_Editor : UnityEditor.Editor
     {
         InputBinding _target;
         private void Awake()

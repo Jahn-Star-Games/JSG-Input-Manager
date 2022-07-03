@@ -8,3 +8,6 @@ Fix: UI_Input dynamic handle pozisyonunu resetle.
 
 Hey Universal Input Blinding v1.0.3.1 © 2022
 Fix: InputBinding_Editor fields
+
+Hey Universal Input Blinding v1.0.4 © 2022
+New: UI_Input event invoking, UI_Input keyState field

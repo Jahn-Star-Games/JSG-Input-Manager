@@ -1,9 +1,11 @@
+//Last Edit: 03.07.2022
 //Developed by Halil Emre Yildiz - @Jahn_Star
 //https://github.com/JahnStar
 //https://jahnstar.github.io
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace JahnStar.CoreThreeD
 {
@@ -21,6 +23,8 @@ namespace JahnStar.CoreThreeD
         [HideInInspector]
         public int axis; // 0 = X, 1 = Y
         [HideInInspector]
+        public int keyState; // not press = 0, press down = 1, pressing = 2, press up = 3
+        [HideInInspector]
         public float scaleFactor = 1;
         [HideInInspector]
         public Vector2 sizeFactor = Vector2.one;
@@ -30,6 +34,10 @@ namespace JahnStar.CoreThreeD
         public bool dynamicBg, circularBg;
         [HideInInspector]
         public RectTransform bg, handle;
+        [HideInInspector]
+        public InputEvent keyEventHandle, axisEventHandle;
+        [HideInInspector]
+        public bool eventInvoke;
         [Space]
         private bool initialValueExist; 
         private void Start()
@@ -59,8 +67,10 @@ namespace JahnStar.CoreThreeD
         }
         public void OnDrag(PointerEventData ped)
         {
+            keyState = 2;
+            if (eventInvoke) keyEventHandle.Invoke(keyState);
+            //
             inputManager.SimulateInput(inputIndex, 1, axisValue);
-
             // isAxis
             if (axisValue == 2) return;
             Vector2 pedPos;
@@ -77,12 +87,16 @@ namespace JahnStar.CoreThreeD
             handle.localPosition = result * sizeFactor;
             // Set input value
             if (axis == 0) axisValue = result.x; else axisValue = result.y;
-            if (axisValue > 0.99f) axisValue = 1f; else if (axisValue < -0.99f) axisValue = -1f;
+            axisValue = axisValue > 0.99f ? 1f : axisValue < -0.99f ? -1 : axisValue;
+            //
+            if (eventInvoke) axisEventHandle.Invoke(axisValue);
         }
         public void OnPointerDown(PointerEventData ped)
         {
+            keyState = 1;
+            if (eventInvoke) keyEventHandle.Invoke(keyState);
+            //
             inputManager.SimulateInput(inputIndex, 1, axisValue);
-
             // isAxis
             if (axisValue == 2) return;
             if (dynamicBg)
@@ -95,9 +109,21 @@ namespace JahnStar.CoreThreeD
                 else handle.localPosition = new Vector2(handle.localPosition.x, 0) * sizeFactor;
                 axisValue = 0;
             }
+            //
+            if (eventInvoke) axisEventHandle.Invoke(axisValue);
         }
+        /// <summary>
+        /// Note: if the camera changes while the key is released, this method doesn't work. 
+        /// In this case, delay the camera switching method. 
+        /// Make sure it doesn't conflict with the camera switching method.
+        /// </summary>
         public void OnPointerUp(PointerEventData ped)
         {
+            keyState = 3;
+            if (eventInvoke) keyEventHandle.Invoke(keyState);
+            keyState = 0;
+            if (eventInvoke) keyEventHandle.Invoke(keyState);
+            //
             inputManager.SimulateInput(inputIndex, 2);
             // isAxis
             if (axisValue == 2) return;
@@ -108,14 +134,18 @@ namespace JahnStar.CoreThreeD
                 axisValue = 0;
             }
             if (dynamicBg) bg.gameObject.SetActive(false);
+            //
+            if (eventInvoke) axisEventHandle.Invoke(axisValue);
         }
     }
+    [System.Serializable] public class InputEvent : UnityEvent<float> { }
 #if UNITY_EDITOR
     [CustomEditor(typeof(UI_Input))]
-    public class UI_Input_Editor : Editor
+    public class UI_Input_Editor : UnityEditor.Editor
     {
         private UI_Input _target;
         private GameManager gameManager;
+        private SerializedProperty keyEventHandle, axisEventHandle;
         private void Awake()
         {
             try 
@@ -124,6 +154,8 @@ namespace JahnStar.CoreThreeD
                 gameManager = GameManager.Instance;
             }
             catch { }
+            keyEventHandle = serializedObject.FindProperty("keyEventHandle");
+            axisEventHandle = serializedObject.FindProperty("axisEventHandle");
         }
         public override void OnInspectorGUI()
         {
@@ -254,14 +286,52 @@ namespace JahnStar.CoreThreeD
                         EditorGUILayout.EndHorizontal();
 
                         EditorGUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField("Current Value ", GUILayout.MinWidth(1));
+                        EditorGUILayout.LabelField("Axis Value ", GUILayout.MinWidth(1));
                         _target.axisValue = EditorGUILayout.Slider(_target.axisValue, -1, 1);
-                        EditorGUI.EndDisabledGroup();
                         EditorGUILayout.EndHorizontal();
 
-                        EditorUtility.SetDirty(_target);
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("Key State ", GUILayout.MinWidth(1));
+                        EditorGUILayout.TextField(_target.keyState + "");
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUI.EndDisabledGroup();
                     }
-                    else _target.axisValue = 2;
+                    else
+                    {
+                        _target.axisValue = 2;
+                        GUI.backgroundColor = Color.white * 0.8f;
+
+                        EditorGUI.BeginDisabledGroup(true);
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("Key State ", GUILayout.MinWidth(1));
+                        EditorGUILayout.TextField(_target.keyState + "");
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUI.EndDisabledGroup();
+                    }
+
+                    EditorGUILayout.Space(5);
+                    EditorGUILayout.BeginHorizontal();
+                    _target.eventInvoke = EditorGUILayout.Toggle("Event Invoke", _target.eventInvoke);
+                    EditorGUILayout.EndHorizontal();
+
+                    if (_target.eventInvoke)
+                    {
+                        GUI.backgroundColor = Color.black * 0.4f;
+                        serializedObject.Update();
+
+                        EditorGUILayout.BeginHorizontal();
+                        GUILayout.Label("Key State Event");
+                        EditorGUILayout.PropertyField(keyEventHandle, GUIContent.none, GUILayout.Height(EditorGUIUtility.singleLineHeight * 5));
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.BeginHorizontal();
+
+                        GUILayout.Label("Axis Value Event");
+                        EditorGUILayout.PropertyField(axisEventHandle, GUIContent.none, GUILayout.Height(EditorGUIUtility.singleLineHeight * 5));
+                        EditorGUILayout.EndHorizontal();
+
+                        serializedObject.ApplyModifiedProperties();
+                    }
+
                     EditorUtility.SetDirty(target);
                 }
             }
