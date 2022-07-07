@@ -11,3 +11,13 @@ Fix: InputBinding_Editor fields
 
 Hey Universal Input Blinding v1.0.4 © 2022
 New: UI_Input event invoking, UI_Input keyState field
+
+Hey Universal Input Blinding v1.0.4.5 © 2022
+Fix: UI_Input fixed origin handle, UI_Input layout
+Add: Simulate PointerDown axisValue
+
+Hey Universal Input Blinding v1.0.5 © 2022
+New: UI_Input calculate axisValueDistance
+Add: Simulate distance axisValue
+
+</> by Halil Emre Yildiz
