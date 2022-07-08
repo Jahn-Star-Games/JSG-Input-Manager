@@ -1,9 +1,11 @@
+//Last Edit: 03.07.2022
 //Developed by Halil Emre Yildiz - @Jahn_Star
 //https://github.com/JahnStar
 //https://jahnstar.github.io
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace JahnStar.CoreThreeD
 {
@@ -21,17 +23,21 @@ namespace JahnStar.CoreThreeD
         [HideInInspector]
         public int axis; // 0 = X, 1 = Y
         [HideInInspector]
+        public int keyState; // not press = 0, press down = 1, pressing = 2, press up = 3
+        [HideInInspector]
         public float scaleFactor = 1;
         [HideInInspector]
         public Vector2 sizeFactor = Vector2.one;
         [HideInInspector]
         public float axisValue = 2;
         [HideInInspector]
-        public bool dynamicBg, circularBg;
+        public bool dynamicBg, circularBg, fixedOriginHandle, calculateDistance;
         [HideInInspector]
         public RectTransform bg, handle;
-        [Space]
-        private bool initialValueExist; 
+        [HideInInspector]
+        public InputEvent keyEventHandler, axisEventHandler;
+        [HideInInspector]
+        public bool eventInvoke;
         private void Start()
         {
             for (int i = 0; i < inputManager.inputs.Count; i++) if (inputManager.inputs[i].name == inputName) inputIndex = i;
@@ -43,8 +49,7 @@ namespace JahnStar.CoreThreeD
             // Load last value
             try
             {
-                float initialValue = dynamicBg ? 0 : inputManager.GetInput(inputIndex);
-                if (initialValue != 0) initialValueExist = true;
+                float initialValue = inputManager.GetInput(inputIndex);
 
                 if (axis == 0) handle.localPosition = new Vector2(initialValue, handle.localPosition.y) * sizeFactor;
                 else handle.localPosition = new Vector2(handle.localPosition.x, initialValue) * sizeFactor;
@@ -56,36 +61,64 @@ namespace JahnStar.CoreThreeD
                 Selection.activeObject = gameObject;
             #endif
             }
+            if (GetComponentsInChildren<UnityEngine.UI.Button>().Length > 1) Debug.Log("UI_Input (" + gameObject.name + ") may not work properly.");
+        }
+        public float axisValueDistance, _prevValue, distanceMultiplier = 100f;
+        private bool _pressed;
+        private void FixedUpdate()
+        {
+            if (calculateDistance)
+            {
+                if (_pressed)
+                {
+                    axisValueDistance = axisValue - _prevValue;
+                    _prevValue = axisValue;
+                }
+                else axisValueDistance = 0;
+                if (eventInvoke) axisEventHandler.Invoke(axisValueDistance * distanceMultiplier);
+                else inputManager.SimulateInput(inputIndex, 1, axisValue);
+            }
         }
         public void OnDrag(PointerEventData ped)
         {
-            inputManager.SimulateInput(inputIndex, 1, axisValue);
-
+            keyState = 2;
+            if (eventInvoke) keyEventHandler.Invoke(keyState);
+            //
+            if (!calculateDistance) inputManager.SimulateInput(inputIndex, 1, axisValue);
             // isAxis
             if (axisValue == 2) return;
+            axisValue = GetHandleLocalAxis(ped.position);
+            //
+            if (!calculateDistance && eventInvoke) axisEventHandler.Invoke(axisValue);
+        }
+        public float GetHandleLocalAxis(Vector2 pedPosition)
+        {
+            float _axisValue;
             Vector2 pedPos;
             Vector2 result;
-            if (circularBg) pedPos = ped.position;
+            if (circularBg) pedPos = pedPosition;
             else
             { 
                 pedPos = handle.position;
-                if (axis == 0) pedPos.x = ped.position.x; else pedPos.y = ped.position.y;
+                if (axis == 0) pedPos.x = pedPosition.x; else pedPos.y = pedPosition.y;
             }
             Vector2 distance_normal = (pedPos - (Vector2)bg.position) / scaleFactor / sizeFactor;
             if (circularBg) result = Vector2.ClampMagnitude(distance_normal, 1f);
             else result = new Vector2(Mathf.Clamp(distance_normal.x, -1, 1), Mathf.Clamp(distance_normal.y, -1, 1));
             handle.localPosition = result * sizeFactor;
             // Set input value
-            if (axis == 0) axisValue = result.x; else axisValue = result.y;
-            if (axisValue > 0.99f) axisValue = 1f; else if (axisValue < -0.99f) axisValue = -1f;
+            if (axis == 0) _axisValue = result.x; else _axisValue = result.y;
+            return _axisValue > 0.99f ? 1f : _axisValue < -0.99f ? -1 : _axisValue;
         }
         public void OnPointerDown(PointerEventData ped)
         {
+            keyState = 1;
+            if (eventInvoke) keyEventHandler.Invoke(keyState);
+            //
             inputManager.SimulateInput(inputIndex, 1, axisValue);
-
             // isAxis
             if (axisValue == 2) return;
-            if (dynamicBg)
+            if (dynamicBg) // the first axisValue is always zero (dynamic joystick) - fixed origin
             {
                 Vector2 target = (ped.position - (Vector2)bg.transform.parent.position) / scaleFactor;
                 bg.localPosition = target;
@@ -95,27 +128,53 @@ namespace JahnStar.CoreThreeD
                 else handle.localPosition = new Vector2(handle.localPosition.x, 0) * sizeFactor;
                 axisValue = 0;
             }
+            else // the first axisValue can be a non-zero value (static stick) - not fixed origin
+            {
+                axisValue = GetHandleLocalAxis(ped.position);
+                inputManager.SimulateInput(inputIndex, 1, axisValue);
+            }
+            //
+            if (eventInvoke) axisEventHandler.Invoke(axisValue);
+            //
+            _pressed = true;
+            _prevValue = axisValue;
         }
+        /// <summary>
+        /// IF ISN'T WORKING: if the camera changes while the key is released, this event is not called. 
+        /// In this case, delay the camera switching method. 
+        /// Make sure it doesn't conflict with the camera switching method.
+        /// IF ISN'T WORKING: if you use button component in child object, this event is not called. 
+        /// </summary>
         public void OnPointerUp(PointerEventData ped)
         {
+            keyState = 3;
+            if (eventInvoke) keyEventHandler.Invoke(keyState);
+            keyState = 0;
+            if (eventInvoke) keyEventHandler.Invoke(keyState);
+            //
             inputManager.SimulateInput(inputIndex, 2);
             // isAxis
             if (axisValue == 2) return;
-            if (!initialValueExist)
+            if (fixedOriginHandle)
             {
                 if (axis == 0) handle.localPosition = new Vector2(0, handle.localPosition.y);
                 else handle.localPosition = new Vector2(handle.localPosition.x, 0);
                 axisValue = 0;
             }
             if (dynamicBg) bg.gameObject.SetActive(false);
+            //
+            if (eventInvoke) axisEventHandler.Invoke(axisValue);
+            _pressed = false;
         }
     }
+    [System.Serializable] public class InputEvent : UnityEvent<float> { }
 #if UNITY_EDITOR
     [CustomEditor(typeof(UI_Input))]
-    public class UI_Input_Editor : Editor
+    public class UI_Input_Editor : UnityEditor.Editor
     {
         private UI_Input _target;
         private GameManager gameManager;
+        private SerializedProperty keyEventHandler, axisEventHandler;
         private void Awake()
         {
             try 
@@ -124,6 +183,8 @@ namespace JahnStar.CoreThreeD
                 gameManager = GameManager.Instance;
             }
             catch { }
+            keyEventHandler = serializedObject.FindProperty("keyEventHandler");
+            axisEventHandler = serializedObject.FindProperty("axisEventHandler");
         }
         public override void OnInspectorGUI()
         {
@@ -241,6 +302,17 @@ namespace JahnStar.CoreThreeD
                                 _target.circularBg = false;
                                 _target.dynamicBg = false;
                             }
+                            EditorGUILayout.BeginHorizontal();
+                            EditorGUILayout.LabelField("Fixed Origin");
+                            GUI.backgroundColor = Color.white * 0.8f;
+                            _target.fixedOriginHandle = EditorGUILayout.Toggle(_target.fixedOriginHandle);
+                            EditorGUILayout.EndHorizontal();
+
+                            EditorGUILayout.BeginHorizontal();
+                            EditorGUILayout.LabelField("Calculate Distance");
+                            _target.calculateDistance = EditorGUILayout.Toggle(_target.calculateDistance);
+                            if (_target.calculateDistance) _target.distanceMultiplier = EditorGUILayout.FloatField((_target.distanceMultiplier == 0) ? 100f : _target.distanceMultiplier);
+                            EditorGUILayout.EndHorizontal();
                         }
                         catch { }
                         GUILayout.EndVertical();
@@ -254,14 +326,60 @@ namespace JahnStar.CoreThreeD
                         EditorGUILayout.EndHorizontal();
 
                         EditorGUILayout.BeginHorizontal();
-                        EditorGUILayout.LabelField("Current Value ", GUILayout.MinWidth(1));
-                        _target.axisValue = EditorGUILayout.Slider(_target.axisValue, -1, 1);
-                        EditorGUI.EndDisabledGroup();
+                        EditorGUILayout.LabelField("Axis Value ", GUILayout.MinWidth(1));
+                        EditorGUILayout.Slider(_target.axisValue, -1, 1);
                         EditorGUILayout.EndHorizontal();
 
-                        EditorUtility.SetDirty(_target);
+                        if (_target.calculateDistance)
+                        {
+                            EditorGUILayout.BeginHorizontal();
+                            EditorGUILayout.LabelField("Distance Value", GUILayout.MinWidth(1));
+                            EditorGUILayout.Slider(_target.axisValueDistance, -1, 1);
+                            EditorGUILayout.EndHorizontal();
+                        }
+
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("Key State ", GUILayout.MinWidth(1));
+                        EditorGUILayout.TextField(_target.keyState + "");
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUI.EndDisabledGroup();
                     }
-                    else _target.axisValue = 2;
+                    else
+                    {
+                        _target.axisValue = 2;
+                        GUI.backgroundColor = Color.white * 0.8f;
+
+                        EditorGUI.BeginDisabledGroup(true);
+                        EditorGUILayout.BeginHorizontal();
+                        EditorGUILayout.LabelField("Key State ", GUILayout.MinWidth(1));
+                        EditorGUILayout.TextField(_target.keyState + "");
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUI.EndDisabledGroup();
+                    }
+
+                    EditorGUILayout.Space(5);
+                    EditorGUILayout.BeginHorizontal();
+                    _target.eventInvoke = EditorGUILayout.Toggle("Event Invoke", _target.eventInvoke);
+                    EditorGUILayout.EndHorizontal();
+
+                    if (_target.eventInvoke)
+                    {
+                        GUI.backgroundColor = Color.black * 0.4f;
+                        serializedObject.Update();
+
+                        EditorGUILayout.BeginHorizontal();
+                        GUILayout.Label("Key State Event");
+                        EditorGUILayout.PropertyField(keyEventHandler, GUIContent.none, GUILayout.Height(EditorGUI.GetPropertyHeight(keyEventHandler)));
+                        EditorGUILayout.EndHorizontal();
+                        EditorGUILayout.BeginHorizontal();
+
+                        GUILayout.Label("Axis Value Event");
+                        EditorGUILayout.PropertyField(axisEventHandler, GUIContent.none, GUILayout.Height(EditorGUI.GetPropertyHeight(axisEventHandler)));
+                        EditorGUILayout.EndHorizontal();
+
+                        serializedObject.ApplyModifiedProperties();
+                    }
+
                     EditorUtility.SetDirty(target);
                 }
             }

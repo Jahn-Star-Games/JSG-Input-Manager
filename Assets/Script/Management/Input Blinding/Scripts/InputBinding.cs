@@ -13,7 +13,7 @@ namespace JahnStar.CoreThreeD
     [CreateAssetMenu(menuName = "JahnStar/Core/Input Bindings", fileName = "Input Bindings")]
     public class InputBinding : ScriptableObject
     {
-        public List<InputData> inputs = new List<InputData>();
+        [SerializeField] internal List<InputData> inputs = new List<InputData>();
         internal Dictionary<string, int> inputIndex;
         /// <summary>
         /// <para>Eger 'hierarchy' penceresinde 'GameManager.cs > inputBindings' listesi var ise</para>
@@ -23,7 +23,7 @@ namespace JahnStar.CoreThreeD
         /// <returns> Eger girdi 'axis' ise -1 = Min ve 1 = Max arasinda deger dondurur. Eger 'button' ise 1 = true, 0 = false olarak dondurur.</returns>
         /// <param name="name">inputs listesindeki adi</param>
         /// <param name="type"> 0 = GetKeyDown, 1 = GetKey, 2 = GetKeyUp</param>
-        public float GetInput(string name, int type = 1)
+        internal float GetInput(string name, int type = 1)
         {
             if (inputIndex == null)
             {
@@ -76,28 +76,28 @@ namespace JahnStar.CoreThreeD
                         {
                             if (input.uiButtonState > 0) // Mobile, UI
                             {
-                                if (type == 0) // basildiysa
+                                if (type == 0) // press down
                                 {
-                                    if (input.uiButtonState == 1) // basiliyor
+                                    if (input.uiButtonState == 1) // pressing
                                     {
                                         input.currentValue = 1;
                                         input.uiButtonState = 0;
                                     }
-                                    else input.currentValue = input.uiButtonState = 0; // basilmiyor
+                                    else input.currentValue = input.uiButtonState = 0; // not press
                                 }
-                                else if (type == 2) // birakildiysa
+                                else if (type == 2) // press up
                                 {
-                                    if (input.uiButtonState == 2) // birakildi
+                                    if (input.uiButtonState == 2) // press up
                                     {
                                         input.currentValue = 1;
                                         input.uiButtonState = 0;
                                     }
-                                    else input.currentValue = input.uiButtonState = 0; // basilmiyor
+                                    else input.currentValue = input.uiButtonState = 0; // not press
                                 }
-                                else // basiliyorsa
+                                else // pressing
                                 {
-                                    if (input.uiButtonState == 1) input.currentValue = 1; // basiliyor
-                                    else input.currentValue = input.uiButtonState = 0; // basilmiyor
+                                    if (input.uiButtonState == 1) input.currentValue = 1; // pressing
+                                    else input.currentValue = input.uiButtonState = 0; // not press
                                 }
                             }
                             else // Keyboard, Mouse, Gamepad
@@ -132,7 +132,7 @@ namespace JahnStar.CoreThreeD
     }
     #if UNITY_EDITOR
     [CustomEditor(typeof(InputBinding))]
-    public class InputBinding_Editor : Editor
+    public class InputBinding_Editor : UnityEditor.Editor
     {
         InputBinding _target;
         private void Awake()
