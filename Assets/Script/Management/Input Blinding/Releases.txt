@@ -20,4 +20,7 @@ Hey Universal Input Blinding v1.0.5 © 2022
 New: UI_Input calculate axisValueDistance
 Add: Simulate distance axisValue
 
+Hey Universal Input Blinding v1.0.5.5 © 2022
+New: UI_Input SimulateInputBlinding toggle
+
 </> by Halil Emre Yildiz

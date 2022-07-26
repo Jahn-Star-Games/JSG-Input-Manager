@@ -31,7 +31,7 @@ namespace JahnStar.CoreThreeD
         [HideInInspector]
         public float axisValue = 2;
         [HideInInspector]
-        public bool dynamicBg, circularBg, fixedOriginHandle, calculateDistance;
+        public bool dynamicBg, circularBg, fixedOriginHandle, calculateDistance, simulateInput;
         [HideInInspector]
         public RectTransform bg, handle;
         [HideInInspector]
@@ -76,7 +76,7 @@ namespace JahnStar.CoreThreeD
                 }
                 else axisValueDistance = 0;
                 if (eventInvoke) axisEventHandler.Invoke(axisValueDistance * distanceMultiplier);
-                else inputManager.SimulateInput(inputIndex, 1, axisValue);
+                else if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
             }
         }
         public void OnDrag(PointerEventData ped)
@@ -84,7 +84,7 @@ namespace JahnStar.CoreThreeD
             keyState = 2;
             if (eventInvoke) keyEventHandler.Invoke(keyState);
             //
-            if (!calculateDistance) inputManager.SimulateInput(inputIndex, 1, axisValue);
+            if (!calculateDistance && simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
             // isAxis
             if (axisValue == 2) return;
             axisValue = GetHandleLocalAxis(ped.position);
@@ -115,7 +115,7 @@ namespace JahnStar.CoreThreeD
             keyState = 1;
             if (eventInvoke) keyEventHandler.Invoke(keyState);
             //
-            inputManager.SimulateInput(inputIndex, 1, axisValue);
+            if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
             // isAxis
             if (axisValue == 2) return;
             if (dynamicBg) // the first axisValue is always zero (dynamic joystick) - fixed origin
@@ -131,7 +131,7 @@ namespace JahnStar.CoreThreeD
             else // the first axisValue can be a non-zero value (static stick) - not fixed origin
             {
                 axisValue = GetHandleLocalAxis(ped.position);
-                inputManager.SimulateInput(inputIndex, 1, axisValue);
+                if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
             }
             //
             if (eventInvoke) axisEventHandler.Invoke(axisValue);
@@ -152,7 +152,7 @@ namespace JahnStar.CoreThreeD
             keyState = 0;
             if (eventInvoke) keyEventHandler.Invoke(keyState);
             //
-            inputManager.SimulateInput(inputIndex, 2);
+            if (simulateInput) inputManager.SimulateInput(inputIndex, 2);
             // isAxis
             if (axisValue == 2) return;
             if (fixedOriginHandle)
@@ -312,6 +312,12 @@ namespace JahnStar.CoreThreeD
                             EditorGUILayout.LabelField("Calculate Distance");
                             _target.calculateDistance = EditorGUILayout.Toggle(_target.calculateDistance);
                             if (_target.calculateDistance) _target.distanceMultiplier = EditorGUILayout.FloatField((_target.distanceMultiplier == 0) ? 100f : _target.distanceMultiplier);
+                            EditorGUILayout.EndHorizontal();
+
+                            EditorGUILayout.Space();
+                            EditorGUILayout.BeginHorizontal();
+                            EditorGUILayout.LabelField("Simulate Input Binding");
+                            _target.simulateInput = EditorGUILayout.Toggle(_target.simulateInput);
                             EditorGUILayout.EndHorizontal();
                         }
                         catch { }
