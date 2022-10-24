@@ -22,7 +22,7 @@ MonoBehaviour:
     sensitivity: 0.03
     gravity: 3
     deadZone: 0.05
-    currentValue: 0
+    currentValue: -0.25
     uiButtonState: 2
     uiAxisState: -0.27280018
   - name: Mouse Y
