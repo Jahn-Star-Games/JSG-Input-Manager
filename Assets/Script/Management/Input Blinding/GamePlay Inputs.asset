@@ -22,7 +22,7 @@ MonoBehaviour:
     sensitivity: 0.03
     gravity: 3
     deadZone: 0.05
-    currentValue: -0.25
+    currentValue: 0
     uiButtonState: 2
     uiAxisState: -0.27280018
   - name: Mouse Y
@@ -156,4 +156,16 @@ MonoBehaviour:
     deadZone: 0.01
     currentValue: 0
     uiButtonState: 2
+    uiAxisState: 0
+  - name: Drop
+    remote: 0
+    type: 1
+    key: 12
+    positiveKey: 11
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
     uiAxisState: 0

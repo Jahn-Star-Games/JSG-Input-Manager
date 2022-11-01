@@ -1,4 +1,4 @@
-//Last Edit: 03.07.2022
+//Last Edit: 29.10.2022 (Fixed Simulate input issue)
 //Developed by Halil Emre Yildiz - @Jahn_Star
 //https://github.com/JahnStar
 //https://jahnstar.github.io
@@ -178,7 +178,7 @@ namespace JahnStar.CoreThreeD
         private void Awake()
         {
             try 
-            {
+            { 
                 _target = (UI_Input)target;
                 gameManager = GameManager.Instance;
             }
@@ -202,6 +202,14 @@ namespace JahnStar.CoreThreeD
             GUILayout.Label("Simulate Input", title);
             //
             GUILayout.Space(5);
+            if (!gameManager)
+            {
+                GUI.backgroundColor = Color.red;
+                GUILayout.Box("Create a Game Manager in Scene", EditorStyles.textField);
+                GUI.backgroundColor = defaultColor;
+                GUILayout.Box("if you have a Game Manager, try reset Unity", EditorStyles.textField);
+                return;
+            }
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Bindings", GUILayout.MinWidth(1));
             string[] bindings = new string[gameManager.inputBindings.Count];
@@ -209,11 +217,8 @@ namespace JahnStar.CoreThreeD
             if (bindings.Length == 0)
             {
                 GUI.backgroundColor = Color.red;
-                if (GUILayout.Button("   Add Input Bindings", EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight), GUILayout.Width(130)))
-                {
-                    Selection.activeObject = gameManager;
-                    gameManager.tab = 1;
-                }
+                GUILayout.Box("Add a Input Binding on Game Manager", EditorStyles.textField);
+                GUI.backgroundColor = defaultColor;
             }
             else
             {
@@ -313,12 +318,6 @@ namespace JahnStar.CoreThreeD
                             _target.calculateDistance = EditorGUILayout.Toggle(_target.calculateDistance);
                             if (_target.calculateDistance) _target.distanceMultiplier = EditorGUILayout.FloatField((_target.distanceMultiplier == 0) ? 100f : _target.distanceMultiplier);
                             EditorGUILayout.EndHorizontal();
-
-                            EditorGUILayout.Space();
-                            EditorGUILayout.BeginHorizontal();
-                            EditorGUILayout.LabelField("Simulate Input Binding");
-                            _target.simulateInput = EditorGUILayout.Toggle(_target.simulateInput);
-                            EditorGUILayout.EndHorizontal();
                         }
                         catch { }
                         GUILayout.EndVertical();
@@ -362,8 +361,11 @@ namespace JahnStar.CoreThreeD
                         EditorGUILayout.EndHorizontal();
                         EditorGUI.EndDisabledGroup();
                     }
-
-                    EditorGUILayout.Space(5);
+                    EditorGUILayout.Space();
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("Simulate Input Binding");
+                    _target.simulateInput = EditorGUILayout.Toggle(_target.simulateInput);
+                    EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal();
                     _target.eventInvoke = EditorGUILayout.Toggle("Event Invoke", _target.eventInvoke);
                     EditorGUILayout.EndHorizontal();

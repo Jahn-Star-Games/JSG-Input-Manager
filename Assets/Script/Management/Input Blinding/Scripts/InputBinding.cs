@@ -1,4 +1,4 @@
-// Developed by Halil Emre Yildiz - </> 2021
+// Developed by Halil Emre Yildiz </> 2021-2022
 //https://github.com/JahnStar
 //https://jahnstar.github.io/donate/
 using System;
