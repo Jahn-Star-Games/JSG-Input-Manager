@@ -26,4 +26,7 @@ New: UI_Input Simulate InputBlinding toggle
 Hey Universal Input Blinding v1.0.6 © 2022
 Fixes input simulating on UI_Input
 
+Hey Universal Input Blinding v1.0.7 © 2022
+Fixes onDisable issue
+
 </> by Halil Emre Yildiz

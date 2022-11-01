@@ -38,8 +38,10 @@ namespace JahnStar.CoreThreeD
         public InputEvent keyEventHandler, axisEventHandler;
         [HideInInspector]
         public bool eventInvoke;
+        private bool _init;
         private void Start()
         {
+            _init = true;
             for (int i = 0; i < inputManager.inputs.Count; i++) if (inputManager.inputs[i].name == inputName) inputIndex = i;
             // isAxis
             if (axisValue == 2) return;
@@ -166,6 +168,7 @@ namespace JahnStar.CoreThreeD
             if (eventInvoke) axisEventHandler.Invoke(axisValue);
             _pressed = false;
         }
+        private void OnDisable() { if (_init) OnPointerUp(null); }
     }
     [System.Serializable] public class InputEvent : UnityEvent<float> { }
 #if UNITY_EDITOR
