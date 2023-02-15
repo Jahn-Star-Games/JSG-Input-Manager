@@ -6,32 +6,30 @@ public class Gyroscope : MonoBehaviour
 {
 	public float sensitivityX = 10f;
 	[Space] public InputEvent eventHandler;
-    [Header("Performance"), SerializeField] private float framePerSecond = 30;
-    [System.Serializable] public class InputEvent : UnityEvent<float> { }
-    private IEnumerator routine;
-    private WaitForSeconds wait;
-	private void OnEnable()
+	[Header("Performance"), SerializeField]
+	private float updatePerFrame = 1;
+	private float _frameTimer = 0;
+	public float DeltaTime() => Time.deltaTime * updatePerFrame;
+	public bool FrameOptimization() // Add the { if (FrameOptimization()) return; } into the Update function.
 	{
-		if (routine == null)
-		{
-			routine = HorizontalUpdate();
-			wait = new WaitForSeconds(1f / framePerSecond);
-		}
-		StartCoroutine(routine);
+		if (updatePerFrame < 2) return false;
+		_frameTimer++;
+		_frameTimer %= updatePerFrame;
+		return _frameTimer != 0;
 	}
-	private void OnDisable() => StopCoroutine(routine);
+	[System.Serializable] public class InputEvent : UnityEvent<float> { }
 	private float prev_acceleration;
-	private IEnumerator HorizontalUpdate()
+    private void Update()
     {
-		while (true)
-		{
-			try
-			{ 
-				eventHandler.Invoke(Mathf.Lerp(prev_acceleration, Input.acceleration.x, Time.deltaTime * sensitivityX));
-				prev_acceleration = Input.acceleration.x;
-			}
-			catch { }
-			yield return wait;
+		if (FrameOptimization()) return;
+    }
+    private void HorizontalUpdate()
+    {
+		try
+		{ 
+			eventHandler.Invoke(Mathf.Lerp(prev_acceleration, Input.acceleration.x, Time.deltaTime * sensitivityX));
+			prev_acceleration = Input.acceleration.x;
 		}
+		catch { }
 	}
 }
