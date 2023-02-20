@@ -1,27 +1,20 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using JahnStar.Optimization;
 [AddComponentMenu("JahnStar/Utility/Gyroscope"), RequireComponent(typeof(RectTransform))]
-public class Gyroscope : MonoBehaviour
+public class Gyroscope : MonoBehaviour, IHeyUpdate
 {
 	public float sensitivityX = 10f;
 	[Space] public InputEvent eventHandler;
 	[Header("Performance"), SerializeField]
-	private float updatePerFrame = 1;
-	private float _frameTimer = 0;
-	public float DeltaTime() => Time.deltaTime * updatePerFrame;
-	public bool FrameOptimization() // Add the { if (FrameOptimization()) return; } into the Update function.
-	{
-		if (updatePerFrame < 2) return false;
-		_frameTimer++;
-		_frameTimer %= updatePerFrame;
-		return _frameTimer != 0;
-	}
+	private int updatePerFrame = 1;
+    public int UpdatePerFrame => updatePerFrame;
 	[System.Serializable] public class InputEvent : UnityEvent<float> { }
 	private float prev_acceleration;
-    private void Update()
+
+    public void HeyUpdate(float deltaTime)
     {
-		if (FrameOptimization()) return;
+		HorizontalUpdate();
     }
     private void HorizontalUpdate()
     {
@@ -32,4 +25,5 @@ public class Gyroscope : MonoBehaviour
 		}
 		catch { }
 	}
+
 }
