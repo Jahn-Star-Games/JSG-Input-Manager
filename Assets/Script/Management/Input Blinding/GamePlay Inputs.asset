@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 004e7291e9ec377408eafa5addd7740c, type: 3}
+  m_Script: {fileID: 11500000, guid: 00a148b95fdeebf4c8a1112e1e0e48e6, type: 3}
   m_Name: GamePlay Inputs
   m_EditorClassIdentifier: 
   inputs:
@@ -23,7 +23,7 @@ MonoBehaviour:
     gravity: 3
     deadZone: 0.05
     currentValue: 0
-    uiButtonState: 2
+    uiButtonState: 0
     uiAxisState: -0.27280018
   - name: Mouse Y
     remote: 1
@@ -35,7 +35,7 @@ MonoBehaviour:
     gravity: 3
     deadZone: 0.05
     currentValue: 0
-    uiButtonState: 2
+    uiButtonState: 0
     uiAxisState: 0
   - name: Jump
     remote: 1
@@ -47,7 +47,7 @@ MonoBehaviour:
     gravity: 4
     deadZone: 0.01
     currentValue: 0
-    uiButtonState: 0
+    uiButtonState: 2
     uiAxisState: 0
   - name: Sprint
     remote: 1
@@ -99,36 +99,24 @@ MonoBehaviour:
     uiAxisState: 0
   - name: Camera
     remote: 0
-    type: 1
+    type: 0
     key: 29
-    positiveKey: 0
-    negativeKey: 0
-    sensitivity: 0.4
-    gravity: 4
+    positiveKey: 29
+    negativeKey: 27
+    sensitivity: 0
+    gravity: 1000
     deadZone: 0.01
     currentValue: 0
     uiButtonState: 0
     uiAxisState: 0
-  - name: SignalR
+  - name: Signal
     remote: 0
-    type: 1
-    key: 17
+    type: 0
+    key: 16
     positiveKey: 17
     negativeKey: 16
-    sensitivity: 1000
+    sensitivity: 0
     gravity: 1000
-    deadZone: 0.001
-    currentValue: 0
-    uiButtonState: 0
-    uiAxisState: 0
-  - name: SignalL
-    remote: 0
-    type: 1
-    key: 16
-    positiveKey: 0
-    negativeKey: 0
-    sensitivity: 0.4
-    gravity: 4
     deadZone: 0.01
     currentValue: 0
     uiButtonState: 0
@@ -168,4 +156,16 @@ MonoBehaviour:
     deadZone: 0.01
     currentValue: 0
     uiButtonState: 2
+    uiAxisState: 0
+  - name: Drop
+    remote: 0
+    type: 1
+    key: 12
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
     uiAxisState: 0

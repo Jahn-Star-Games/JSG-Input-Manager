@@ -1,4 +1,4 @@
-// Developed by Halil Emre Yildiz - </> 2021
+// Developed by Halil Emre Yildiz </> 2021-2022
 //https://github.com/JahnStar
 //https://jahnstar.github.io/donate/
 using System;
@@ -11,8 +11,9 @@ namespace JahnStar.CoreThreeD
 {
     [SerializeField]
     [CreateAssetMenu(menuName = "JahnStar/Core/Input Bindings", fileName = "Input Bindings")]
-    public class InputBinding : ScriptableObject
+    public class HeyInputBinding : ScriptableObject
     {
+        public void DevelopedByHalilEmreYildiz() { }
         [SerializeField] internal List<InputData> inputs = new List<InputData>();
         internal Dictionary<string, int> inputIndex;
         /// <summary>
@@ -130,14 +131,14 @@ namespace JahnStar.CoreThreeD
             if (uiAxisState < 2) inputs[index].uiAxisState = uiAxisState;
         }
     }
-    #if UNITY_EDITOR
-    [CustomEditor(typeof(InputBinding))]
+#if UNITY_EDITOR
+    [CustomEditor(typeof(HeyInputBinding))]
     public class InputBinding_Editor : UnityEditor.Editor
     {
-        InputBinding _target;
+        HeyInputBinding _target;
         private void Awake()
         {
-            try { _target = (InputBinding)target; }
+            try { _target = (HeyInputBinding)target; }
             catch { }
         }
         public override void OnInspectorGUI()
@@ -297,7 +298,7 @@ namespace JahnStar.CoreThreeD
             }
         }
     }
-    #endif
+#endif
     [Serializable]
     public class InputData
     {

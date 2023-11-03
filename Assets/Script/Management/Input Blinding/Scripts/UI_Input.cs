@@ -1,4 +1,5 @@
-//Last Edit: 03.07.2022
+//Last Fix 22.5.2023 (Fixed: Distance method is not working issue.)
+//Last Edit: 27.5.2023 (Added: Smooth Touching)
 //Developed by Halil Emre Yildiz - @Jahn_Star
 //https://github.com/JahnStar
 //https://jahnstar.github.io
@@ -15,7 +16,7 @@ namespace JahnStar.CoreThreeD
         [HideInInspector]
         public int inputManagerIndex;
         [HideInInspector]
-        public InputBinding inputManager;
+        public HeyInputBinding inputManager;
         [HideInInspector]
         public int inputIndex;
         [HideInInspector]
@@ -38,8 +39,10 @@ namespace JahnStar.CoreThreeD
         public InputEvent keyEventHandler, axisEventHandler;
         [HideInInspector]
         public bool eventInvoke;
+        private bool _init;
         private void Start()
         {
+            _init = true;
             for (int i = 0; i < inputManager.inputs.Count; i++) if (inputManager.inputs[i].name == inputName) inputIndex = i;
             // isAxis
             if (axisValue == 2) return;
@@ -65,19 +68,28 @@ namespace JahnStar.CoreThreeD
         }
         public float axisValueDistance, _prevValue, distanceMultiplier = 100f;
         private bool _pressed;
-        private void FixedUpdate()
+        private float touching_velocity = 0;
+        public float touching_smoothTime = 0f;
+        private void Update()
         {
+            // Touchpad mode (distance method)
             if (calculateDistance)
             {
                 if (_pressed)
                 {
-                    axisValueDistance = axisValue - _prevValue;
+                    if (touching_smoothTime > 0) axisValueDistance = Mathf.SmoothDamp(axisValueDistance, axisValue - _prevValue, ref touching_velocity, touching_smoothTime);
+                    else axisValueDistance = axisValue - _prevValue;
                     _prevValue = axisValue;
                 }
-                else axisValueDistance = 0;
+                else
+                {
+                    axisValueDistance = 0;
+                }
+
                 if (eventInvoke) axisEventHandler.Invoke(axisValueDistance * distanceMultiplier);
-                else if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
+                else if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValueDistance);
             }
+
         }
         public void OnDrag(PointerEventData ped)
         {
@@ -166,6 +178,7 @@ namespace JahnStar.CoreThreeD
             if (eventInvoke) axisEventHandler.Invoke(axisValue);
             _pressed = false;
         }
+        private void OnDisable() { if (_init) OnPointerUp(null); }
     }
     [System.Serializable] public class InputEvent : UnityEvent<float> { }
 #if UNITY_EDITOR
@@ -178,7 +191,7 @@ namespace JahnStar.CoreThreeD
         private void Awake()
         {
             try 
-            {
+            { 
                 _target = (UI_Input)target;
                 gameManager = GameManager.Instance;
             }
@@ -202,6 +215,14 @@ namespace JahnStar.CoreThreeD
             GUILayout.Label("Simulate Input", title);
             //
             GUILayout.Space(5);
+            if (!gameManager)
+            {
+                GUI.backgroundColor = Color.red;
+                GUILayout.Box("Create a Game Manager in Scene", EditorStyles.textField);
+                GUI.backgroundColor = defaultColor;
+                GUILayout.Box("if you have a Game Manager, try reset Unity", EditorStyles.textField);
+                return;
+            }
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Bindings", GUILayout.MinWidth(1));
             string[] bindings = new string[gameManager.inputBindings.Count];
@@ -209,11 +230,8 @@ namespace JahnStar.CoreThreeD
             if (bindings.Length == 0)
             {
                 GUI.backgroundColor = Color.red;
-                if (GUILayout.Button("   Add Input Bindings", EditorStyles.textField, GUILayout.Height(EditorGUIUtility.singleLineHeight), GUILayout.Width(130)))
-                {
-                    Selection.activeObject = gameManager;
-                    gameManager.tab = 1;
-                }
+                GUILayout.Box("Add a Input Binding on Game Manager", EditorStyles.textField);
+                GUI.backgroundColor = defaultColor;
             }
             else
             {
@@ -309,15 +327,15 @@ namespace JahnStar.CoreThreeD
                             EditorGUILayout.EndHorizontal();
 
                             EditorGUILayout.BeginHorizontal();
-                            EditorGUILayout.LabelField("Calculate Distance");
+                            EditorGUILayout.LabelField("Touching (distance and smoothing)");
                             _target.calculateDistance = EditorGUILayout.Toggle(_target.calculateDistance);
-                            if (_target.calculateDistance) _target.distanceMultiplier = EditorGUILayout.FloatField((_target.distanceMultiplier == 0) ? 100f : _target.distanceMultiplier);
                             EditorGUILayout.EndHorizontal();
-
-                            EditorGUILayout.Space();
                             EditorGUILayout.BeginHorizontal();
-                            EditorGUILayout.LabelField("Simulate Input Binding");
-                            _target.simulateInput = EditorGUILayout.Toggle(_target.simulateInput);
+                            if (_target.calculateDistance)
+                            {
+                                _target.distanceMultiplier = EditorGUILayout.FloatField((_target.distanceMultiplier == 0) ? 100f : _target.distanceMultiplier);
+                                _target.touching_smoothTime = EditorGUILayout.FloatField(_target.touching_smoothTime);
+                            }
                             EditorGUILayout.EndHorizontal();
                         }
                         catch { }
@@ -362,8 +380,11 @@ namespace JahnStar.CoreThreeD
                         EditorGUILayout.EndHorizontal();
                         EditorGUI.EndDisabledGroup();
                     }
-
-                    EditorGUILayout.Space(5);
+                    EditorGUILayout.Space();
+                    EditorGUILayout.BeginHorizontal();
+                    EditorGUILayout.LabelField("Simulate Input Binding");
+                    _target.simulateInput = EditorGUILayout.Toggle(_target.simulateInput);
+                    EditorGUILayout.EndHorizontal();
                     EditorGUILayout.BeginHorizontal();
                     _target.eventInvoke = EditorGUILayout.Toggle("Event Invoke", _target.eventInvoke);
                     EditorGUILayout.EndHorizontal();
@@ -377,8 +398,8 @@ namespace JahnStar.CoreThreeD
                         GUILayout.Label("Key State Event");
                         EditorGUILayout.PropertyField(keyEventHandler, GUIContent.none, GUILayout.Height(EditorGUI.GetPropertyHeight(keyEventHandler)));
                         EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.BeginHorizontal();
 
+                        EditorGUILayout.BeginHorizontal();
                         GUILayout.Label("Axis Value Event");
                         EditorGUILayout.PropertyField(axisEventHandler, GUIContent.none, GUILayout.Height(EditorGUI.GetPropertyHeight(axisEventHandler)));
                         EditorGUILayout.EndHorizontal();
@@ -390,7 +411,7 @@ namespace JahnStar.CoreThreeD
                 }
             }
             catch { Selection.activeObject = _target; }
-            //base.DrawDefaultInspector();
+            //base.DrawDefaultInspector(); // Debug
         }
     }
 #endif

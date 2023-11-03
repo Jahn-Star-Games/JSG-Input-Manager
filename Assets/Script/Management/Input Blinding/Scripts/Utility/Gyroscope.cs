@@ -1,37 +1,29 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using JahnStar.Optimization;
 [AddComponentMenu("JahnStar/Utility/Gyroscope"), RequireComponent(typeof(RectTransform))]
-public class Gyroscope : MonoBehaviour
+public class Gyroscope : MonoBehaviour, IHeyUpdate
 {
 	public float sensitivityX = 10f;
 	[Space] public InputEvent eventHandler;
-    [Header("Performance"), SerializeField] private float framePerSecond = 30;
-    [System.Serializable] public class InputEvent : UnityEvent<float> { }
-    private IEnumerator routine;
-    private WaitForSeconds wait;
-	private void OnEnable()
-	{
-		if (routine == null)
-		{
-			routine = HorizontalUpdate();
-			wait = new WaitForSeconds(1f / framePerSecond);
-		}
-		StartCoroutine(routine);
-	}
-	private void OnDisable() => StopCoroutine(routine);
+	[Header("Performance"), SerializeField]
+	private int updatePerFrame = 1;
+    public int UpdatePerFrame => updatePerFrame;
+	[System.Serializable] public class InputEvent : UnityEvent<float> { }
 	private float prev_acceleration;
-	private IEnumerator HorizontalUpdate()
+
+    public void HeyUpdate(float deltaTime)
     {
-		while (true)
-		{
-			try
-			{ 
-				eventHandler.Invoke(Mathf.Lerp(prev_acceleration, Input.acceleration.x, Time.deltaTime * sensitivityX));
-				prev_acceleration = Input.acceleration.x;
-			}
-			catch { }
-			yield return wait;
+		HorizontalUpdate();
+    }
+    private void HorizontalUpdate()
+    {
+		try
+		{ 
+			eventHandler.Invoke(Mathf.Lerp(prev_acceleration, Input.acceleration.x, Time.deltaTime * sensitivityX));
+			prev_acceleration = Input.acceleration.x;
 		}
+		catch { }
 	}
+
 }
