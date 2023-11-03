@@ -1,4 +1,5 @@
-//Last Edit: 29.10.2022 (Fixed Simulate input issue)
+//Last Fix 22.5.2023 (Fixed: Distance method is not working issue.)
+//Last Edit: 27.5.2023 (Added: Smooth Touching)
 //Developed by Halil Emre Yildiz - @Jahn_Star
 //https://github.com/JahnStar
 //https://jahnstar.github.io
@@ -15,7 +16,7 @@ namespace JahnStar.CoreThreeD
         [HideInInspector]
         public int inputManagerIndex;
         [HideInInspector]
-        public InputBinding inputManager;
+        public HeyInputBinding inputManager;
         [HideInInspector]
         public int inputIndex;
         [HideInInspector]
@@ -67,19 +68,28 @@ namespace JahnStar.CoreThreeD
         }
         public float axisValueDistance, _prevValue, distanceMultiplier = 100f;
         private bool _pressed;
-        private void FixedUpdate()
+        private float touching_velocity = 0;
+        public float touching_smoothTime = 0f;
+        private void Update()
         {
+            // Touchpad mode (distance method)
             if (calculateDistance)
             {
                 if (_pressed)
                 {
-                    axisValueDistance = axisValue - _prevValue;
+                    if (touching_smoothTime > 0) axisValueDistance = Mathf.SmoothDamp(axisValueDistance, axisValue - _prevValue, ref touching_velocity, touching_smoothTime);
+                    else axisValueDistance = axisValue - _prevValue;
                     _prevValue = axisValue;
                 }
-                else axisValueDistance = 0;
+                else
+                {
+                    axisValueDistance = 0;
+                }
+
                 if (eventInvoke) axisEventHandler.Invoke(axisValueDistance * distanceMultiplier);
-                else if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
+                else if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValueDistance);
             }
+
         }
         public void OnDrag(PointerEventData ped)
         {
@@ -317,9 +327,15 @@ namespace JahnStar.CoreThreeD
                             EditorGUILayout.EndHorizontal();
 
                             EditorGUILayout.BeginHorizontal();
-                            EditorGUILayout.LabelField("Calculate Distance");
+                            EditorGUILayout.LabelField("Touching (distance and smoothing)");
                             _target.calculateDistance = EditorGUILayout.Toggle(_target.calculateDistance);
-                            if (_target.calculateDistance) _target.distanceMultiplier = EditorGUILayout.FloatField((_target.distanceMultiplier == 0) ? 100f : _target.distanceMultiplier);
+                            EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.BeginHorizontal();
+                            if (_target.calculateDistance)
+                            {
+                                _target.distanceMultiplier = EditorGUILayout.FloatField((_target.distanceMultiplier == 0) ? 100f : _target.distanceMultiplier);
+                                _target.touching_smoothTime = EditorGUILayout.FloatField(_target.touching_smoothTime);
+                            }
                             EditorGUILayout.EndHorizontal();
                         }
                         catch { }
@@ -382,8 +398,8 @@ namespace JahnStar.CoreThreeD
                         GUILayout.Label("Key State Event");
                         EditorGUILayout.PropertyField(keyEventHandler, GUIContent.none, GUILayout.Height(EditorGUI.GetPropertyHeight(keyEventHandler)));
                         EditorGUILayout.EndHorizontal();
-                        EditorGUILayout.BeginHorizontal();
 
+                        EditorGUILayout.BeginHorizontal();
                         GUILayout.Label("Axis Value Event");
                         EditorGUILayout.PropertyField(axisEventHandler, GUIContent.none, GUILayout.Height(EditorGUI.GetPropertyHeight(axisEventHandler)));
                         EditorGUILayout.EndHorizontal();
@@ -395,7 +411,7 @@ namespace JahnStar.CoreThreeD
                 }
             }
             catch { Selection.activeObject = _target; }
-            //base.DrawDefaultInspector();
+            //base.DrawDefaultInspector(); // Debug
         }
     }
 #endif
