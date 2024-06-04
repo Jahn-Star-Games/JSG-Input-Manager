@@ -1,0 +1,16 @@
+{
+    "name": "com.jahnstargames.input-manager",
+    "rootNamespace": "",
+    "references": [
+
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
