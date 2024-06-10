@@ -46,7 +46,7 @@ MonoBehaviour:
     sensitivity: 0.4
     gravity: 4
     deadZone: 0.01
-    currentValue: 1
+    currentValue: 0
     uiButtonState: 0
     uiAxisState: 0
   - name: Sprint
