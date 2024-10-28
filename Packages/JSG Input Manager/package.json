@@ -1,7 +1,7 @@
 {
   "name": "com.jahnstargames.input-manager",
   "displayName": "JSG Input Manager",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "unity": "2022.3",
   "unityRelease": "20f1",
   "description": "Release Note:\nAdded Advanced remote input\n\nDeveloper:\n</> by Halil Emre Yildiz",
@@ -120,6 +120,11 @@
       "notes": [
         "Added: Advanced remote input"
       ]
+    },
+    {
+      "version" : "1.1.5",
+      "date": "10/2024",
+      "notes": "Added: InputManager, GameInput"
     }
   ]
 }
