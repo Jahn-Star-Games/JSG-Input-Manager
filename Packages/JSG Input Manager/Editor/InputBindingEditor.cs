@@ -163,16 +163,16 @@ namespace JahnStarGames.InputManager
             GUILayout.Space(3);
             GUILayout.BeginVertical(EditorStyles.helpBox);
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Open Manager", EditorStyles.miniButton, GUILayout.ExpandWidth(false))) InputManagerEditor.SelectInputManager();
+            // if (GUILayout.Button("Open Manager", EditorStyles.miniButton, GUILayout.ExpandWidth(false))) InputManagerEditor.SelectInputManager();
             GUILayout.FlexibleSpace();
             GUILayout.Label(title, EditorStyles.boldLabel);
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Set As Default", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
-            {
-                InputManager inputManager = InputManager.Instance;
-                inputManager.inputBinding = (InputBinding)Selection.activeObject;
-                Selection.activeObject = inputManager;
-            }
+            // if (GUILayout.Button("Set As Default", EditorStyles.miniButton, GUILayout.ExpandWidth(false)))
+            // {
+            //     InputManager inputManager = InputManager.Instance;
+            //     inputManager.inputBinding = (InputBinding)Selection.activeObject;
+            //     Selection.activeObject = inputManager;
+            // }
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
             EditorGUILayout.EndVertical();
