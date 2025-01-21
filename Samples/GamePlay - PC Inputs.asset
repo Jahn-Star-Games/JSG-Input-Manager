@@ -1,0 +1,195 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 004e7291e9ec377408eafa5addd7740c, type: 3}
+  m_Name: GamePlay - PC Inputs
+  m_EditorClassIdentifier: 
+  inputs:
+  - name: LookH
+    remote: Mouse X
+    type: 0
+    key: 0
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.03
+    gravity: 3
+    deadZone: 0.05
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: -0.27280018
+  - name: LookV
+    remote: Mouse Y
+    type: 0
+    key: 0
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.03
+    gravity: 3
+    deadZone: 0.05
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Jump
+    remote: 
+    type: 1
+    key: 44
+    positiveKey: 44
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Sprint
+    remote: 
+    type: 1
+    key: 46
+    positiveKey: 46
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 1
+  - name: Vertical
+    remote: 
+    type: 0
+    key: 0
+    positiveKey: 9
+    negativeKey: 19
+    sensitivity: 0.03
+    gravity: 100
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Horizontal
+    remote: 
+    type: 0
+    key: 0
+    positiveKey: 20
+    negativeKey: 18
+    sensitivity: 0.03
+    gravity: 100
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Camera
+    remote: 
+    type: 0
+    key: 29
+    positiveKey: 29
+    negativeKey: 27
+    sensitivity: 0
+    gravity: 1000
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Signal
+    remote: 
+    type: 0
+    key: 16
+    positiveKey: 17
+    negativeKey: 16
+    sensitivity: 0
+    gravity: 1000
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Light
+    remote: 
+    type: 1
+    key: 26
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Horn
+    remote: 
+    type: 1
+    key: 23
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Fire1
+    remote: 
+    type: 1
+    key: 0
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: InteractUp
+    remote: 
+    type: 0
+    key: 10
+    positiveKey: 29
+    negativeKey: 27
+    sensitivity: 0.01
+    gravity: 1000
+    deadZone: 1
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: InteractRight
+    remote: 
+    type: 0
+    key: 12
+    positiveKey: 10
+    negativeKey: 8
+    sensitivity: 0.01
+    gravity: 1000
+    deadZone: 1
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Drop
+    remote: 
+    type: 1
+    key: 8
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Use
+    remote: 
+    type: 1
+    key: 21
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0

@@ -1,0 +1,135 @@
+{
+  "name": "com.jahnstargames.inputmanager",
+  "displayName": "JSG Input Manager",
+  "version": "1.1.6",
+  "unity": "2022.3",
+  "unityRelease": "20f1",
+  "description": "Release Note:\nAdded Advanced remote input\n\nDeveloper:\n</> by Halil Emre Yildiz",
+  "keywords": [],
+  "author": {
+    "name": "Jahn Star Games",
+    "email": "contact@jahnstar.com",
+    "url": "https://jahnstar.com"
+  },
+  "dependencies": {},
+  "releaseNotes": [
+    {
+      "version": "1.0.2",
+      "date": "2021",
+      "notes": [
+        "Name: Hey Input Bindings",
+        "Fix minor errors"
+      ]
+    },
+    {
+      "version": "1.0.3",
+      "date": "2021",
+      "notes": [
+        "Fix: reset dynamic handle position"
+      ]
+    },
+    {
+      "version": "1.0.3.1",
+      "date": "2022",
+      "notes": [
+        "Fix: InputBinding_Editor fields"
+      ]
+    },
+    {
+      "version": "1.0.4",
+      "date": "2022",
+      "notes": [
+        "New: UI_Input event invoking, UI_Input keyState field"
+      ]
+    },
+    {
+      "version": "1.0.4.5",
+      "date": "2022",
+      "notes": [
+        "Fix: UI_Input fixed origin handle, UI_Input layout",
+        "Add: Simulate PointerDown axisValue"
+      ]
+    },
+    {
+      "version": "1.0.5",
+      "date": "2022",
+      "notes": [
+        "New: UI_Input calculate axisValueDistance",
+        "Add: Simulate distance axisValue"
+      ]
+    },
+    {
+      "version": "1.0.5.5",
+      "date": "2022",
+      "notes": [
+        "New: UI_Input Simulate InputBlinding toggle"
+      ]
+    },
+    {
+      "version": "1.0.6",
+      "date": "2022",
+      "notes": [
+        "Fixes input simulating on UI_Input"
+      ]
+    },
+    {
+      "version": "1.0.7",
+      "date": "2022",
+      "notes": [
+        "Fixes onDisable issue"
+      ]
+    },
+    {
+      "version": "1.0.9",
+      "date": "2023",
+      "notes": [
+        "New: UI_Dpad component"
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2023",
+      "notes": [
+        "Added: UI_Dpad enable events with images"
+      ]
+    },
+    {
+      "version": "1.1.1",
+      "date": "2023",
+      "notes": [
+        "Fixes UI_Dpad snapHandle position, resetting events"
+      ]
+    },
+    {
+      "version": "1.1.2",
+      "date": "2023",
+      "notes": [
+        "Fixed: Distance method is not working issue."
+      ]
+    },
+    {
+      "version": "1.1.3",
+      "date": "2023",
+      "notes": [
+        "Added: Smooth Touching"
+      ]
+    },
+    {
+      "version": "1.1.4",
+      "date": "2024",
+      "notes": [
+        "Added: Advanced remote input"
+      ]
+    },
+    {
+      "version" : "1.1.5",
+      "date": "10/2024",
+      "notes": "Added: InputManager, GameInput"
+    },
+    {
+      "version" : "1.1.6",
+      "date": "11/2024",
+      "notes": "Removed: InputManager, GameInput"
+    }
+  ]
+}

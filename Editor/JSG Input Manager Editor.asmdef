@@ -1,0 +1,18 @@
+﻿{
+    "name": "JSG Input Manager Editor",
+    "references": [
+        "JSG Input Manager",
+        "UnityEditor"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

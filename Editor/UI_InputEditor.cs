@@ -1,200 +1,24 @@
 //Last Fix 22.5.2023 (Fixed: Distance method is not working issue.)
-//Last Edit: 27.5.2023 (Added: Smooth Touching)
+//Last Edit: 11.11.2023
 //Developed by Halil Emre Yildiz - @Jahn_Star
 //https://github.com/JahnStar
 //https://jahnstar.github.io
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.EventSystems;
-using UnityEngine.Events;
+using System.Linq;
+using System;
+using System.IO;
 
-namespace JahnStar.CoreThreeD
+namespace JahnStarGames.InputManager
 {
-    [AddComponentMenu("JahnStar/Core/UI Input"), RequireComponent(typeof(RectTransform), typeof(UnityEngine.UI.Image))]
-    public class UI_Input : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
-    {
-        [HideInInspector]
-        public int inputManagerIndex;
-        [HideInInspector]
-        public HeyInputBinding inputManager;
-        [HideInInspector]
-        public int inputIndex;
-        [HideInInspector]
-        public string inputName;
-        [HideInInspector]
-        public int axis; // 0 = X, 1 = Y
-        [HideInInspector]
-        public int keyState; // not press = 0, press down = 1, pressing = 2, press up = 3
-        [HideInInspector]
-        public float scaleFactor = 1;
-        [HideInInspector]
-        public Vector2 sizeFactor = Vector2.one;
-        [HideInInspector]
-        public float axisValue = 2;
-        [HideInInspector]
-        public bool dynamicBg, circularBg, fixedOriginHandle, calculateDistance, simulateInput;
-        [HideInInspector]
-        public RectTransform bg, handle;
-        [HideInInspector]
-        public InputEvent keyEventHandler, axisEventHandler;
-        [HideInInspector]
-        public bool eventInvoke;
-        private bool _init;
-        private void Start()
-        {
-            _init = true;
-            for (int i = 0; i < inputManager.inputs.Count; i++) if (inputManager.inputs[i].name == inputName) inputIndex = i;
-            // isAxis
-            if (axisValue == 2) return;
-            else axisValue = 0;
-            scaleFactor = bg.GetComponentInParent<Canvas>().scaleFactor;
-            sizeFactor = bg.sizeDelta * 0.5f;
-            // Load last value
-            try
-            {
-                float initialValue = inputManager.GetInput(inputIndex);
-
-                if (axis == 0) handle.localPosition = new Vector2(initialValue, handle.localPosition.y) * sizeFactor;
-                else handle.localPosition = new Vector2(handle.localPosition.x, initialValue) * sizeFactor;
-                axisValue = initialValue;
-            }
-            catch 
-            {
-            #if UNITY_EDITOR
-                Selection.activeObject = gameObject;
-            #endif
-            }
-            if (GetComponentsInChildren<UnityEngine.UI.Button>().Length > 1) Debug.Log("UI_Input (" + gameObject.name + ") may not work properly.");
-        }
-        public float axisValueDistance, _prevValue, distanceMultiplier = 100f;
-        private bool _pressed;
-        private float touching_velocity = 0;
-        public float touching_smoothTime = 0f;
-        private void Update()
-        {
-            // Touchpad mode (distance method)
-            if (calculateDistance)
-            {
-                if (_pressed)
-                {
-                    if (touching_smoothTime > 0) axisValueDistance = Mathf.SmoothDamp(axisValueDistance, axisValue - _prevValue, ref touching_velocity, touching_smoothTime);
-                    else axisValueDistance = axisValue - _prevValue;
-                    _prevValue = axisValue;
-                }
-                else
-                {
-                    axisValueDistance = 0;
-                }
-
-                if (eventInvoke) axisEventHandler.Invoke(axisValueDistance * distanceMultiplier);
-                else if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValueDistance);
-            }
-
-        }
-        public void OnDrag(PointerEventData ped)
-        {
-            keyState = 2;
-            if (eventInvoke) keyEventHandler.Invoke(keyState);
-            //
-            if (!calculateDistance && simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
-            // isAxis
-            if (axisValue == 2) return;
-            axisValue = GetHandleLocalAxis(ped.position);
-            //
-            if (!calculateDistance && eventInvoke) axisEventHandler.Invoke(axisValue);
-        }
-        public float GetHandleLocalAxis(Vector2 pedPosition)
-        {
-            float _axisValue;
-            Vector2 pedPos;
-            Vector2 result;
-            if (circularBg) pedPos = pedPosition;
-            else
-            { 
-                pedPos = handle.position;
-                if (axis == 0) pedPos.x = pedPosition.x; else pedPos.y = pedPosition.y;
-            }
-            Vector2 distance_normal = (pedPos - (Vector2)bg.position) / scaleFactor / sizeFactor;
-            if (circularBg) result = Vector2.ClampMagnitude(distance_normal, 1f);
-            else result = new Vector2(Mathf.Clamp(distance_normal.x, -1, 1), Mathf.Clamp(distance_normal.y, -1, 1));
-            handle.localPosition = result * sizeFactor;
-            // Set input value
-            if (axis == 0) _axisValue = result.x; else _axisValue = result.y;
-            return _axisValue > 0.99f ? 1f : _axisValue < -0.99f ? -1 : _axisValue;
-        }
-        public void OnPointerDown(PointerEventData ped)
-        {
-            keyState = 1;
-            if (eventInvoke) keyEventHandler.Invoke(keyState);
-            //
-            if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
-            // isAxis
-            if (axisValue == 2) return;
-            if (dynamicBg) // the first axisValue is always zero (dynamic joystick) - fixed origin
-            {
-                Vector2 target = (ped.position - (Vector2)bg.transform.parent.position) / scaleFactor;
-                bg.localPosition = target;
-                bg.gameObject.SetActive(true);
-                // Fix
-                if (axis == 0) handle.localPosition = new Vector2(0, handle.localPosition.y) * sizeFactor;
-                else handle.localPosition = new Vector2(handle.localPosition.x, 0) * sizeFactor;
-                axisValue = 0;
-            }
-            else // the first axisValue can be a non-zero value (static stick) - not fixed origin
-            {
-                axisValue = GetHandleLocalAxis(ped.position);
-                if (simulateInput) inputManager.SimulateInput(inputIndex, 1, axisValue);
-            }
-            //
-            if (eventInvoke) axisEventHandler.Invoke(axisValue);
-            //
-            _pressed = true;
-            _prevValue = axisValue;
-        }
-        /// <summary>
-        /// IF ISN'T WORKING: if the camera changes while the key is released, this event is not called. 
-        /// In this case, delay the camera switching method. 
-        /// Make sure it doesn't conflict with the camera switching method.
-        /// IF ISN'T WORKING: if you use button component in child object, this event is not called. 
-        /// </summary>
-        public void OnPointerUp(PointerEventData ped)
-        {
-            keyState = 3;
-            if (eventInvoke) keyEventHandler.Invoke(keyState);
-            keyState = 0;
-            if (eventInvoke) keyEventHandler.Invoke(keyState);
-            //
-            if (simulateInput) inputManager.SimulateInput(inputIndex, 2);
-            // isAxis
-            if (axisValue == 2) return;
-            if (fixedOriginHandle)
-            {
-                if (axis == 0) handle.localPosition = new Vector2(0, handle.localPosition.y);
-                else handle.localPosition = new Vector2(handle.localPosition.x, 0);
-                axisValue = 0;
-            }
-            if (dynamicBg) bg.gameObject.SetActive(false);
-            //
-            if (eventInvoke) axisEventHandler.Invoke(axisValue);
-            _pressed = false;
-        }
-        private void OnDisable() { if (_init) OnPointerUp(null); }
-    }
-    [System.Serializable] public class InputEvent : UnityEvent<float> { }
-#if UNITY_EDITOR
     [CustomEditor(typeof(UI_Input))]
-    public class UI_Input_Editor : UnityEditor.Editor
+    public class UI_InputEditor : UnityEditor.Editor
     {
         private UI_Input _target;
-        private GameManager gameManager;
         private SerializedProperty keyEventHandler, axisEventHandler;
         private void Awake()
         {
-            try 
-            { 
-                _target = (UI_Input)target;
-                gameManager = GameManager.Instance;
-            }
+            try {  _target = (UI_Input)target; }
             catch { }
             keyEventHandler = serializedObject.FindProperty("keyEventHandler");
             axisEventHandler = serializedObject.FindProperty("axisEventHandler");
@@ -215,19 +39,12 @@ namespace JahnStar.CoreThreeD
             GUILayout.Label("Simulate Input", title);
             //
             GUILayout.Space(5);
-            if (!gameManager)
-            {
-                GUI.backgroundColor = Color.red;
-                GUILayout.Box("Create a Game Manager in Scene", EditorStyles.textField);
-                GUI.backgroundColor = defaultColor;
-                GUILayout.Box("if you have a Game Manager, try reset Unity", EditorStyles.textField);
-                return;
-            }
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Bindings", GUILayout.MinWidth(1));
-            string[] bindings = new string[gameManager.inputBindings.Count];
-            for (int i = 0; i < bindings.Length; i++) bindings[i] = gameManager.inputBindings[i].name;
-            if (bindings.Length == 0)
+            string[] guids = AssetDatabase.FindAssets("t:InputBinding");
+            string[] names = guids.Select(guid => Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(guid))).ToArray();
+            int index = !_target.inputBinding ? -1 : Array.IndexOf(names, _target.inputBinding.name);
+            if (guids.Length == 0)
             {
                 GUI.backgroundColor = Color.red;
                 GUILayout.Box("Add a Input Binding on Game Manager", EditorStyles.textField);
@@ -235,31 +52,33 @@ namespace JahnStar.CoreThreeD
             }
             else
             {
-                _target.inputManagerIndex = EditorGUILayout.Popup(_target.inputManagerIndex, bindings);
-                _target.inputManager = gameManager.inputBindings[_target.inputManagerIndex];
+                if (index < 0) index = 0;
+                index = Array.IndexOf(names, names[EditorGUILayout.Popup(index, names)]);
+                _target.inputBinding = AssetDatabase.LoadAssetAtPath<InputBinding>(AssetDatabase.GUIDToAssetPath(guids[0]));
+                _target.inputBinding.name = names[index];
                 GUI.backgroundColor = defaultColor;
             }
             EditorGUILayout.EndHorizontal();
             //
             try
             {
-                if (_target.inputManager)
+                if (_target.inputBinding)
                 {
                     EditorGUILayout.BeginHorizontal();
                     EditorGUILayout.LabelField("Input Name ", GUILayout.MinWidth(1));
 
-                    string[] inputs = new string[_target.inputManager.inputs.Count];
+                    string[] inputs = new string[_target.inputBinding.inputs.Count];
                     for (int i = 0; i < inputs.Length; i++)
                     {
-                        inputs[i] = _target.inputManager.inputs[i].name;
-                        if (_target.inputManager.inputs[i].name == _target.inputName) _target.inputIndex = i;
+                        inputs[i] = _target.inputBinding.inputs[i].name;
+                        if (_target.inputBinding.inputs[i].name == _target.inputName) _target.inputIndex = i;
                     }
                     _target.inputIndex = EditorGUILayout.Popup(_target.inputIndex, inputs);
-                    _target.inputName = _target.inputManager.inputs[_target.inputIndex].name;
+                    _target.inputName = _target.inputBinding.inputs[_target.inputIndex].name;
                     EditorGUILayout.EndHorizontal();
 
                     // Axis stick
-                    if (_target.inputManager.inputs[_target.inputIndex].type == InputData.Type.Axes)
+                    if (_target.inputBinding.inputs[_target.inputIndex].type == InputData.Type.Axes)
                     {
                         title.alignment = TextAnchor.MiddleLeft;
                         GUIStyle header = GUIStyle.none;
@@ -414,5 +233,4 @@ namespace JahnStar.CoreThreeD
             //base.DrawDefaultInspector(); // Debug
         }
     }
-#endif
 }

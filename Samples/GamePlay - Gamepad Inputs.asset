@@ -9,12 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00a148b95fdeebf4c8a1112e1e0e48e6, type: 3}
-  m_Name: GamePlay Inputs
+  m_Script: {fileID: 11500000, guid: 004e7291e9ec377408eafa5addd7740c, type: 3}
+  m_Name: GamePlay - Gamepad Inputs
   m_EditorClassIdentifier: 
   inputs:
-  - name: Mouse X
-    remote: 1
+  - name: LookH
+    remote: RS Horizontal
     type: 0
     key: 0
     positiveKey: 0
@@ -23,10 +23,10 @@ MonoBehaviour:
     gravity: 3
     deadZone: 0.05
     currentValue: 0
-    uiButtonState: 0
-    uiAxisState: -0.27280018
-  - name: Mouse Y
-    remote: 1
+    uiButtonState: 2
+    uiAxisState: 0
+  - name: LookV
+    remote: RS Vertical
     type: 0
     key: 0
     positiveKey: 0
@@ -38,7 +38,7 @@ MonoBehaviour:
     uiButtonState: 0
     uiAxisState: 0
   - name: Jump
-    remote: 1
+    remote: Jump
     type: 1
     key: 44
     positiveKey: 44
@@ -47,10 +47,10 @@ MonoBehaviour:
     gravity: 4
     deadZone: 0.01
     currentValue: 0
-    uiButtonState: 2
+    uiButtonState: 0
     uiAxisState: 0
   - name: Sprint
-    remote: 1
+    remote: Sprint
     type: 1
     key: 46
     positiveKey: 46
@@ -62,7 +62,7 @@ MonoBehaviour:
     uiButtonState: 0
     uiAxisState: 1
   - name: Vertical
-    remote: 0
+    remote: Vertical
     type: 0
     key: 0
     positiveKey: 9
@@ -74,7 +74,7 @@ MonoBehaviour:
     uiButtonState: 0
     uiAxisState: 0
   - name: Horizontal
-    remote: 0
+    remote: Horizontal
     type: 0
     key: 0
     positiveKey: 20
@@ -84,21 +84,9 @@ MonoBehaviour:
     deadZone: 0.01
     currentValue: 0
     uiButtonState: 0
-    uiAxisState: 0
-  - name: Interact
-    remote: 0
-    type: 1
-    key: 10
-    positiveKey: 10
-    negativeKey: 0
-    sensitivity: 0
-    gravity: 100
-    deadZone: 0.01
-    currentValue: 0
-    uiButtonState: 0
-    uiAxisState: 0
+    uiAxisState: -0.04939355
   - name: Camera
-    remote: 0
+    remote: 
     type: 0
     key: 29
     positiveKey: 29
@@ -110,7 +98,7 @@ MonoBehaviour:
     uiButtonState: 0
     uiAxisState: 0
   - name: Signal
-    remote: 0
+    remote: 
     type: 0
     key: 16
     positiveKey: 17
@@ -122,7 +110,7 @@ MonoBehaviour:
     uiButtonState: 0
     uiAxisState: 0
   - name: Light
-    remote: 0
+    remote: 
     type: 1
     key: 26
     positiveKey: 0
@@ -134,7 +122,7 @@ MonoBehaviour:
     uiButtonState: 0
     uiAxisState: 0
   - name: Horn
-    remote: 0
+    remote: 
     type: 1
     key: 23
     positiveKey: 0
@@ -146,7 +134,7 @@ MonoBehaviour:
     uiButtonState: 0
     uiAxisState: 0
   - name: Fire1
-    remote: 1
+    remote: 
     type: 1
     key: 0
     positiveKey: 0
@@ -155,12 +143,48 @@ MonoBehaviour:
     gravity: 4
     deadZone: 0.01
     currentValue: 0
-    uiButtonState: 2
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: InteractUp
+    remote: D-Pad Vertical
+    type: 0
+    key: 10
+    positiveKey: 10
+    negativeKey: 11
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: InteractRight
+    remote: D-Pad Horizontal
+    type: 0
+    key: 12
+    positiveKey: 12
+    negativeKey: 13
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
     uiAxisState: 0
   - name: Drop
-    remote: 0
+    remote: 
     type: 1
-    key: 12
+    key: 70
+    positiveKey: 0
+    negativeKey: 0
+    sensitivity: 0.4
+    gravity: 4
+    deadZone: 0.01
+    currentValue: 0
+    uiButtonState: 0
+    uiAxisState: 0
+  - name: Use
+    remote: 
+    type: 1
+    key: 69
     positiveKey: 0
     negativeKey: 0
     sensitivity: 0.4
